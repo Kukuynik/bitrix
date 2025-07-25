@@ -1,0 +1,36 @@
+# Bitrix system folders
+/bitrix/
+/upload/
+*/.git/
+*.log
+
+# Composer
+/vendor/
+/composer.lock
+
+# IDEs and OS junk
+.idea/
+/.vscode/
+/nbproject/
+*.swp
+*.swo
+Thumbs.db
+.DS_Store
+*.bak
+*.tmp
+
+# Environment and config
+.env
+.env.*
+public_html/.env
+
+# Backups
+*.zip
+*.tar
+*.rar
+*.gz
+
+# Sensitive files
+local.php
+dbconn.php
+/bitrix/php_interface/.settings.php
