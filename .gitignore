@@ -1,6 +1,6 @@
-/bitrix/*
-/vendor/*
-/upload/*
+bitrix/
+vendor/
+upload/
 
 /local/php_interface/logs
 /local/logs/
