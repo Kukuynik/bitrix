@@ -1,8 +1,5 @@
 <?php
 if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) die();
-
-// Если явно нужно меню разделов — подключаем
-include($_SERVER["DOCUMENT_ROOT"]."/local/include/presscenter_sections_menu.php"); 
 ?>
 
 <section class="news-catalog">

@@ -19,7 +19,7 @@ $arComponentParameters = [
             "PARENT" => "BASE",
             "NAME" => "Каталог ЧПУ",
             "TYPE" => "STRING",
-            "DEFAULT" => "/press-center/"
+            "DEFAULT" => "/news/"
         ],
     ]
 ];

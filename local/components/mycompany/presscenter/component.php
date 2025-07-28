@@ -26,7 +26,7 @@ if(!$iblockId) {
     return;
 }
 
-$arParams['SEF_FOLDER'] = trim((string)($arParams['SEF_FOLDER'] ?? '/press-center/'), '/').'/';
+$arParams['SEF_FOLDER'] = trim((string)($arParams['SEF_FOLDER'] ?? '/news/'), '/').'/';
 $sefFolder = '/'.$arParams['SEF_FOLDER'];
 
 $curPage = $APPLICATION->GetCurPage();
@@ -89,17 +89,27 @@ if ($componentPage == 'detail' && !empty($arVariables['ELEMENT_CODE'])) {
     }
 }
 
-$arResult["FOLDER"] = $sefFolder;
-$arResult["VARIABLES"] = $arVariables;
+$sectionId = isset($_GET['SECTION_ID']) ? (int)$_GET['SECTION_ID'] : 0;
 
 $main = [];
 $others = [];
+$arSelect = ["ID", "NAME", "CODE", "DATE_ACTIVE_FROM", "PREVIEW_PICTURE", "PROPERTY_THEME", "PROPERTY_MAIN", "DETAIL_PAGE_URL", "IBLOCK_SECTION_ID"];
+
+$arFilter = [
+    "IBLOCK_ID" => $iblockId,
+    "ACTIVE" => "Y"
+];
+if ($sectionId > 0) {
+    $arFilter["SECTION_ID"] = $sectionId;
+    $arFilter["INCLUDE_SUBSECTIONS"] = "N";
+}
+
 $rs = CIBlockElement::GetList(
     ["PROPERTY_MAIN" => "DESC", "ACTIVE_FROM" => "DESC"],
-    ["IBLOCK_ID" => $iblockId, "ACTIVE" => "Y"],
+    $arFilter,
     false,
     false,
-    ["ID", "NAME", "CODE", "DATE_ACTIVE_FROM", "PREVIEW_PICTURE", "PROPERTY_THEME", "PROPERTY_MAIN"]
+    $arSelect
 );
 while ($row = $rs->GetNext()) {
     $row["DETAIL_PAGE_URL"] = $arResult["FOLDER"] . $row["CODE"] . '/';
@@ -108,6 +118,5 @@ while ($row = $rs->GetNext()) {
 }
 $arResult['ELEMENTS_MAIN'] = $main;
 $arResult['ELEMENTS_OTHERS'] = $others;
-
 $this->IncludeComponentTemplate($componentPage);
 ?>

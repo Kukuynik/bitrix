@@ -60,7 +60,7 @@ $arUrlRewrite=array (
   array (
     'CONDITION' => '#^/news/#',
     'RULE' => '',
-    'ID' => 'bitrix:news',
+    'ID' => 'mycompany:presscenter',
     'PATH' => '/news/index.php',
     'SORT' => 100,
   ),
