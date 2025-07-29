@@ -2,7 +2,7 @@
 
 <section class="page-section events-page">
     <div class="page-section__heading">
-        <h1>Новости</h1>
+        <h1>Пресс центр</h1>
         
     </div>
 
