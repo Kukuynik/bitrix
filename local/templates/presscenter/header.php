@@ -25,7 +25,7 @@
                 </svg>
             </a>
             <!-- Меню новостей -->
-            <nav>
+            <nav class="site-menu__wrapper">
                 <? $APPLICATION->IncludeComponent(
                     "bitrix:menu",
                     "news_menu",

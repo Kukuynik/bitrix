@@ -46,7 +46,7 @@ function SetUniqueMainNews($arFields) {
                 CIBlockElement::SetPropertyValuesEx(
                     $arOther['ID'],
                     $IBLOCK_ID,
-                    [ $PROPERTY_CODE => false ] // Сбрасываем
+                    [ $PROPERTY_CODE => false ]
                 );
             }
         }
