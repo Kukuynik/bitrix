@@ -28574,7 +28574,7 @@ h3+.contacts__row {
   gap:0;
   position:relative;
   transition:border-color .1s linear;
-  background-color: #e9e8e8;
+  background-color: #f1f1f2;
 }
 .news:hover .news__title {
   color:#0050b2
@@ -37749,4 +37749,9 @@ h3+.contacts__row {
   .civil-service-contests-search .site-search-wrapper.opened .site-search--advanced {
     padding-bottom:40px
   }
+}
+#labubu {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }

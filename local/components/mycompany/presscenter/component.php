@@ -1,6 +1,4 @@
 <?php
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
 if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) die();
 
 if (!\Bitrix\Main\Loader::includeModule('iblock')) {
@@ -9,7 +7,7 @@ if (!\Bitrix\Main\Loader::includeModule('iblock')) {
 }
 
 $iblockType = $arParams['IBLOCK_TYPE'] ?? 'news';
-$iblockCode = $arParams['IBLOCK_CODE'] ?? 'news';
+$iblockCode = $arParams['IBLOCK_CODE'] ?? 'press_center'; // или параметр
 $iblockId = (int)($arParams['IBLOCK_ID'] ?? 0);
 
 if (!$iblockId) {
@@ -30,7 +28,6 @@ if(!$iblockId) {
 
 $arParams['SEF_FOLDER'] = trim((string)($arParams['SEF_FOLDER'] ?? '/news/'), '/').'/';
 $sefFolder = '/'.$arParams['SEF_FOLDER'];
-$arResult['FOLDER'] = $sefFolder;
 
 $curPage = $APPLICATION->GetCurPage();
 $relativeUrl = substr($curPage, strlen($sefFolder));
@@ -44,19 +41,52 @@ if ($relativeUrl !== '' && $relativeUrl !== 'index.php') {
     $arVariables['ELEMENT_CODE'] = trim($relativeUrl, '/');
 }
 
+
 if ($componentPage == 'list') {
     $arSections = [];
     $rsSections = CIBlockSection::GetList(
         ['SORT'=>'ASC','NAME'=>'ASC'],
         ['IBLOCK_ID'=>$iblockId, 'ACTIVE'=>'Y', 'GLOBAL_ACTIVE'=>'Y'],
         false,
-        ['ID', 'NAME', 'SECTION_PAGE_URL', 'CODE']
+        ['ID', 'NAME', 'SECTION_PAGE_URL', 'DEPTH_LEVEL']
     );
     while ($arSection = $rsSections->GetNext()) {
         $arSections[$arSection['ID']] = $arSection;
         $arSections[$arSection['ID']]['ELEMENTS'] = [];
     }
+
+    $rsElements = CIBlockElement::GetList(
+        ['SORT'=>'ASC'],
+        ['IBLOCK_ID' => $iblockId, 'ACTIVE' => 'Y'],
+        false, false,
+        ['ID', 'NAME', 'DETAIL_PAGE_URL', 'IBLOCK_SECTION_ID']
+    );
+
+    while ($arItem = $rsElements->GetNext()) {
+        if($arItem['IBLOCK_SECTION_ID'] && isset($arSections[$arItem['IBLOCK_SECTION_ID']])) {
+            $arSections[$arItem['IBLOCK_SECTION_ID']]['ELEMENTS'][] = $arItem;
+        } else {
+            $arSections[0]['ELEMENTS'][] = $arItem; 
+        }
+    }
+
     $arResult['SECTIONS'] = $arSections;
+}
+
+if ($componentPage == 'detail' && !empty($arVariables['ELEMENT_CODE'])) {
+    $arSelect = ["ID", "NAME", "DETAIL_PICTURE", "DETAIL_TEXT", "DETAIL_PAGE_URL"];
+    $arFilter = [
+        "IBLOCK_ID" => $iblockId,
+        "ACTIVE" => "Y",
+        "CODE" => $arVariables['ELEMENT_CODE']
+    ];
+    $rsElement = CIBlockElement::GetList([], $arFilter, false, false, $arSelect);
+    if ($arElement = $rsElement->GetNext()) {
+        $arResult['ELEMENT'] = $arElement;
+    } else {
+        ShowError("Элемент не найден");
+        return;
+    }
 }
 
 $sectionId = isset($_GET['SECTION_ID']) ? (int)$_GET['SECTION_ID'] : 0;
@@ -88,25 +118,5 @@ while ($row = $rs->GetNext()) {
 }
 $arResult['ELEMENTS_MAIN'] = $main;
 $arResult['ELEMENTS_OTHERS'] = $others;
-
-$arResult['ELEMENTS_MAIN'] = $main;
-$arResult['ELEMENTS_OTHERS'] = $others;
-$arResult['FOLDER'] = $arParams['SEF_FOLDER'];
-
-if ($componentPage == 'detail' && !empty($arVariables['ELEMENT_CODE'])) {
-    $arSelect = ["ID", "NAME", "DETAIL_PICTURE", "DETAIL_TEXT", "DATE_ACTIVE_FROM", "PROPERTY_THEME"];
-    $arFilter = [
-        "IBLOCK_ID" => $iblockId,
-        "ACTIVE" => "Y",
-        "CODE" => $arVariables['ELEMENT_CODE']
-    ];
-    $rsElement = CIBlockElement::GetList([], $arFilter, false, false, $arSelect);
-    if ($arElement = $rsElement->GetNext()) {
-        $arResult['ELEMENT'] = $arElement;
-    } else {
-        ShowError("Новость не найдена");
-        return;
-    }
-}
-
 $this->IncludeComponentTemplate($componentPage);
+?>
